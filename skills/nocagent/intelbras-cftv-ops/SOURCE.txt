@@ -1,0 +1,6 @@
+Origem: https://github.com/Wittemberg/nocagent
+  - SKILL.md adaptado de core/src/agent/skills/intelbras-cftv-ops/SKILL.md
+    (removida a dependencia das MCP tools cctv_get_snapshot/cctv_get_recording,
+     substituidas por curl direto)
+  - references/cgi-api-dahua.md extraido de .agents/skills/cctv-dahua/SKILL.md
+Instalado em 2026-09-20T11:58:05-03:00
