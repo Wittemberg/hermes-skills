@@ -84,24 +84,21 @@ To update an active Swarm stack while preserving Portainer's editable state and 
 1. Fetch current stack details and file content:
    - `GET /api/stacks/{id}` returns current `Env` array.
    - `GET /api/stacks/{id}/file` returns `StackFileContent`.
-2. Submit updated compose content via `PUT /api/stacks/{id}?endpointId=1`:
+2. Back up the existing compose file, stack metadata, active image tag/digest, and persistent configuration before a production image change. Confirm the rollback image is present or preserve it as an image archive; a Docker tag alone is not a rollback if the local image has already been pruned.
+3. Validate the new image separately (build, isolated startup/health check, application-specific smoke tests, and in-image `npm audit --omit=dev` when applicable). Then submit updated compose content through Portainer's API, retaining `Env` and using `prune:false` unless removing services is explicitly intended:
 
 ```python
 payload = json.dumps({
     'stackFileContent': updated_compose_yaml,
-    'env': stack_details.get('Env', []),
-    'prune': True
+    'env': stack_details.get('Env') or [],
+    'prune': False,
+    'pullImage': False
 }).encode('utf-8')
-
-req = urllib.request.Request(
-    f'https://<portainer-domain>/api/stacks/{stack_id}?endpointId=1',
-    data=payload,
-    headers={'X-API-Key': token, 'Content-Type': 'application/json'},
-    method='PUT'
-)
-with urllib.request.urlopen(req, context=ctx) as resp:
-    updated = json.loads(resp.read().decode('utf-8'))
 ```
+
+4. Configure a reversible Swarm rollout in the Compose definition (for a single stateful replica, `order: start-first`, a bounded `monitor`, and `failure_action: rollback` when compatible with the app's resource constraints). With Swarm `update_config.monitor`, the Docker CLI/stack update may wait for the entire monitor window even when the new task is already healthy; inspect task state, health, logs, and public endpoints before interpreting the wait as a hang. After convergence, confirm Portainer's stack state, service image, and health independently.
+5. If the renderer cannot reliably reconcile `Status: 3` to final state, poll Portainer, Swarm task state and the service health rather than starting a second stack or issuing blind repeated deployments.
+
 
 ### 5. Verify Stack Portainer Management State
 
@@ -113,7 +110,10 @@ curl -s -H "X-API-Key: $PT_TOKEN" https://<portainer-domain>/api/stacks | jq -r 
 
 ## Pitfalls
 
-- **Updating via PUT requires `prune: true` and `env`:** Omitting `env` clears configured stack environment variables in Portainer. Omitting `prune: true` may leave orphaned service configurations when definitions change.
+- **Stacks paradas:** uma stack pode continuar cadastrada no Portainer com `Status: 2`, embora esteja ausente de `docker stack ls`. Consulte `/api/stacks` antes de criar outra com o mesmo nome. Após atualizar via PUT, `Status: 3` pode indicar implantação em andamento; releia até confirmar `Status: 1` e valide serviço/healthcheck. Se continuar parada, use `POST /api/stacks/{id}/start?endpointId=<id>`.
+- **Imagem local removida:** não prometa rollback para uma tag antiga sem confirmar que a imagem ainda existe ou pode ser obtida do registry. Preserve o compose anterior e explicite quando o rollback disponível é retornar ao estado parado, sem remover dados.
+
+- **Updating via PUT:** Always preserve the current `Env` array; omit it only when intentionally clearing stack variables. Do not set `prune:true` by default: it can remove services omitted from the submitted Compose. Use `prune:false` for routine image/label updates and enable pruning only after reviewing the services that would be removed.
 - **Mutable config bind mounts:** Avoid `:ro` on single-file bind mounts (e.g. `/data/app/.env:/app/.env:ro`) when the web UI or application needs to save credentials or runtime settings. Ensure host permissions permit writes by the container user (e.g. `chmod 666` or ownership matching `1000:1000`).
 
 - **Mandatory `swarmID`:** `POST /api/stacks/create/swarm/string` fails with `400 Bad Request` (`Invalid Swarm ID`) if `swarmID` is missing from the request payload. Always query and supply `docker info --format '{{.Swarm.Cluster.ID}}'`.
