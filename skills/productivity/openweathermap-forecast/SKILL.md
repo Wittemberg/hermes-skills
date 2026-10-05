@@ -1,6 +1,6 @@
 ---
 name: openweathermap-forecast
-description: Consulta clima e previsão do tempo via OpenWeatherMap.
+description: "Consulta clima e previsão do tempo via OpenWeatherMap. Use quando o usuario pedir clima atual, previsão, temperatura ou alertas meteorológicos de uma cidade."
 version: 0.1.0
 author: Wittemberg, Hermes Agent
 license: MIT

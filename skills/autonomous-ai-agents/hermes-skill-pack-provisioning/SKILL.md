@@ -1,6 +1,6 @@
 ---
 name: hermes-skill-pack-provisioning
-description: "Install skill packs from Git; rewrite SOUL.md identity."
+description: "Install skill packs from Git; rewrite SOUL.md identity. Use when installing a skill pack from a Git repository into a Hermes profile or adapting foreign skill packs to local conventions."
 version: 1.0.0
 metadata:
   hermes:

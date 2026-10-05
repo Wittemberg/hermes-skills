@@ -1,6 +1,6 @@
 ---
 name: swarm-traefik-app-deploy
-description: "Deploy an app to the VPS Docker Swarm + Traefik stack."
+description: "Deploy an app to the VPS Docker Swarm + Traefik stack. Use when publishing, updating, rolling back or exposing a service (with or without VPN) on the production Swarm cluster behind Traefik."
 version: 1.0.0
 metadata:
   hermes:

@@ -1,6 +1,6 @@
 ---
 name: sql-server-2008-production-dba
-description: "DBA operacional e tuning para SQL Server 2008 e 2008 R2."
+description: "DBA operacional e tuning para SQL Server 2008 e 2008 R2. Use quando houver lentidão, travamentos, manutenção, backup ou tuning em bases SQL Server 2008/2008 R2 em produção."
 version: 1.0.0
 author: Wittemberg, TecnoTeam, Hermes Agent
 license: MIT

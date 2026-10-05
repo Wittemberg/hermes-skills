@@ -1,6 +1,6 @@
 ---
 name: virtualizor-ops
-description: Operate Virtualizor hypervisor, EMPS, and KVM VMs.
+description: "Operate Virtualizor hypervisor, EMPS, and KVM VMs. Use when managing Virtualizor nodes, the EMPS admin panel, KVM VM lifecycle, network profiles, or diagnosing VPS issues on Virtualizor."
 version: "1.0.0"
 author: "Hermes"
 license: "MIT"

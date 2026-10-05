@@ -24,6 +24,18 @@ Skill de classe para operações que combinam diagnóstico de storage Proxmox, p
 5. Valide o dump e o destino antes do restore.
 6. Restaure a VM desligada e valide o resultado externamente.
 
+## Pós-reboot, limpeza e reaproveitamento de storage ZFS
+
+Quando a missão incluir remover cargas, limpar logs, reaproveitar discos e reservar um dataset, use esta ordem para não confundir configuração ausente com dados apagados:
+
+1. Confirme o pós-reboot com `uptime`, `uname -r` e `pveversion`; inventarie `qm list`, `pct list` e `pvesm status`.
+2. Para cada storage afetado, confronte `pvesm list <storage>` e `/etc/pve/storage.cfg` com o conteúdo físico no caminho configurado (`find <path> -xdev ...`), além de `zfs list -t all`/snapshots. Remover VMs/configuração ou storage não implica que os dumps foram apagados. Verifique a cópia externa na AWS antes de destruir arquivos locais; não considere upload completo apenas porque o usuário o descreveu como em andamento/concluído sem uma evidência acessível do destino. Obtenha autorização explícita para exclusão dos dados remanescentes.
+3. Na limpeza ordinária, quantifique `journalctl --disk-usage` e `du -xhd2 /var/log /var/cache/apt/archives` antes/depois. Preserve logs atuais e aplique retenção, por exemplo `journalctl --rotate --vacuum-time=30d`, e limpe só o cache baixado com `apt-get clean`; não trunque ou remova `/var/log` em massa. Relate o espaço realmente liberado, mesmo quando vacuum remove 0 B.
+4. Antes de escrever num NVMe, correlacione serial/modelo por `lsblk`, `/dev/disk/by-id`, `zpool status -P`, `findmnt` e `wipefs -n`; confirme que o alvo está vazio, sem partições/mounts/assinaturas e não pertence a pool/LVM. Revalide o serial imediatamente antes de alterar. SMART e temperatura orientam o risco de um resilver.
+5. Para espelhar um pool de disco único sem descartar datasets, use `zpool attach <pool> <membro-existente> /dev/disk/by-id/<disco-alvo>` — não recrie o pool e não use `zpool add`, que adiciona outro vdev em vez de espelhar o atual. Use ID persistente, não `nvme0n1`/`nvme1n1` volátil. Valide com `zpool status -P`; diferencie “mirror configurado/resilver em progresso” de “resilver concluído”, confirme erros zero antes de declarar redundância íntegra e evite reboot/carga desnecessária durante a reconstrução.
+6. Para `/LOCAL_BKP` com capacidade reservada/limitada no pool, prefira um dataset ZFS dedicado: confirme dataset e mountpoint ausentes e espaço livre; então `zfs create -o mountpoint=/LOCAL_BKP -o quota=1T -o reservation=1T <pool>/LOCAL_BKP`. Quota limita o uso e reservation retira esse espaço da disponibilidade dos demais datasets; valide `findmnt -T /LOCAL_BKP`, `zfs get mountpoint,quota,reservation <dataset>`, `zfs list` e `df -hT`. Isso não cadastra por si só storage no Proxmox; só edite `storage.cfg` se solicitado.
+7. Revalide dados preservados, backups locais, mountpoints, estado/resilver ZFS, storages cadastrados e VMs/CTs. Relate resíduos/backups remanescentes, storages vazios e upload AWS não verificado; não os chame de apagados/limpos quando só a configuração foi removida.
+
 ## Diagnóstico do nó correto
 
 Execute no host que realmente contém as VMs:

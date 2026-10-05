@@ -1,6 +1,6 @@
 ---
 name: secret-storage-design
-description: "Design vaults and multi-tenant credential stores safely."
+description: "Design vaults and multi-tenant credential stores safely. Use when designing or reviewing credential storage, multi-tenant vaults or secret isolation between clients and tenants."
 version: 1.0.0
 metadata:
   hermes:

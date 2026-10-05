@@ -1,6 +1,6 @@
 ---
 name: email-mcp-marlinjai
-description: "Setup e uso do email-mcp: Gmail e Outlook via OAuth."
+description: "Setup e uso do email-mcp: Gmail e Outlook via OAuth. Use quando o Hermes precisar ler, enviar, organizar ou diagnosticar e-mails das contas gmail.com e hotmail.com via MCP @marlinjai/email-mcp."
 version: 0.1.0
 author: Wittemberg, Hermes Agent
 platforms: [linux, macos, windows]

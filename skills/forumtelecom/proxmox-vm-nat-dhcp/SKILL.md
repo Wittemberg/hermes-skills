@@ -1,6 +1,6 @@
 ---
 name: proxmox-vm-nat-dhcp
-description: Configure NAT e DHCP interno em nós Proxmox VE.
+description: "Configure NAT e DHCP interno em nós Proxmox VE. Use quando uma VM ou LXC de um nó Proxmox precisar de saída NAT, rede interna com DHCP ou diagnóstico de conectividade de rede virtualizada."
 version: 1.1.0
 author: TecnoTeam, Hermes Agent
 license: MIT

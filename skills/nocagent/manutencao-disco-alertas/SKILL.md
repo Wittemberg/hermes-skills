@@ -1,6 +1,6 @@
 ---
 name: manutencao-disco-alertas
-description: "Limpeza de disco por cron e alertas WhatsApp no Hermes."
+description: "Limpeza de disco por cron e alertas WhatsApp no Hermes. Use quando for configurar, auditar ou depurar limpeza automatica de disco (cron) ou alertas de espaco via WhatsApp no host Hermes."
 version: 1.0.0
 ---
 

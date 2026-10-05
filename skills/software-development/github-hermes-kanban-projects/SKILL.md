@@ -1,6 +1,6 @@
 ---
 name: github-hermes-kanban-projects
-description: "Use for Hermes Kanban and GitHub AI project planning."
+description: "Use for Hermes Kanban and GitHub AI project planning. Use when creating or updating Kanban boards, project tasks or AI-planned work tracked on GitHub Projects via Hermes."
 version: 1.0.0
 author: Hermes Agent
 license: MIT

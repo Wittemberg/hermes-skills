@@ -1,10 +1,6 @@
 ---
 name: windows-server-ssh-hermes
-description: >
-  Configura e valida acesso SSH do Hermes/Linux a Windows Server usando Win32-OpenSSH,
-  autenticação por chave pública e PowerShell como shell remoto. Inclui instalação em
-  Windows Server 2016, porta SSH personalizada, firewall, ACL de authorized_keys,
-  aliases no ~/.ssh/config e diagnóstico de falhas.
+description: "Configura e valida acesso SSH do Hermes/Linux a Windows Server usando Win32-OpenSSH, autenticação por chave pública e PowerShell como shell remoto. Inclui instalação em Windows Server 2016, porta SSH personalizada, firewall, ACL de authorized_keys e diagnóstico de falhas. Use quando o Hermes precisar estabelecer, validar ou corrigir acesso SSH a um Windows Server."
 version: 1.0.0
 author: TecnoTeam
 platforms:
@@ -586,7 +582,9 @@ uma NOVA sessão SSH com chave.
 
 # 14. Troubleshooting
 
-Consulte `references/troubleshooting.md`.
+Credenciais rejeitadas, conexão recusada ou shell errado após logar: consulte
+`references/troubleshooting.md`, que cobre as falhas de instalação, firewall,
+ACL de authorized_keys e shell padrão já observadas em campo.
 
 # 15. Critério de conclusão
 

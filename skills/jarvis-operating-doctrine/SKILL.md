@@ -1,6 +1,6 @@
 ---
 name: jarvis-operating-doctrine
-description: Apply JARVIS-style evidence, safety, and precise execution.
+description: "Apply JARVIS-style evidence, safety, and precise execution. Use as the default operating doctrine for all diagnostic, change-management and incident work on Wittemberg infrastructure."
 version: 0.1.0
 author: Wittemberg, Hermes Agent
 license: MIT

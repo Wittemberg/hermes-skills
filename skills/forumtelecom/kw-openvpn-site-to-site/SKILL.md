@@ -1,6 +1,6 @@
 ---
 name: kw-openvpn-site-to-site
-description: Configure OpenVPN site-to-site entre Linux KW e MikroTik.
+description: "Configure OpenVPN site-to-site entre Linux KW e MikroTik. Use quando for levantar, diagnosticar ou restabelecer o tunel OpenVPN site-to-site entre um host Linux (KW) e um roteador MikroTik."
 version: 0.1.0
 author: Wittemberg, Hermes Agent
 license: MIT

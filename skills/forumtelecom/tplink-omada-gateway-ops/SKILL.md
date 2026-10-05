@@ -1,6 +1,6 @@
 ---
 name: tplink-omada-gateway-ops
-description: "TP-Link Omada gateways ER605/TL-R605: acesso, config, VPN."
+description: "TP-Link Omada gateways ER605/TL-R605: acesso, config, VPN. Use quando for acessar, configurar, atualizar firmware ou diagnosticar gateways ER605/TL-R605, incluindo VPN e controladora Omada."
 version: 0.1.0
 author: Wittemberg, Hermes Agent
 platforms: [linux, macos, windows]

@@ -1,6 +1,6 @@
 ---
 name: proxmox-vm-migration-script
-description: Migre VMs Proxmox com o script unificado.
+description: "Migre VMs Proxmox com o script unificado. Use quando precisar mover, clonar ou migrar maquinas virtuais entre nos ou storages do Proxmox VE usando o script de migracao unificado."
 version: 1.0.0
 author: Wittemberg, Hermes Agent
 license: MIT
