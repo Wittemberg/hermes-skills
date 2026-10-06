@@ -1,7 +1,7 @@
 ---
 name: virtualizor-ops
 description: "Operate Virtualizor hypervisor, EMPS, and KVM VMs. Use when managing Virtualizor nodes, the EMPS admin panel, KVM VM lifecycle, network profiles, or diagnosing VPS issues on Virtualizor."
-version: "1.0.0"
+version: "1.1.0"
 author: "Hermes"
 license: "MIT"
 metadata:
@@ -147,6 +147,18 @@ cat /etc/cron.d/virtualizor
 cat /var/virtualizor/log/cron
 cat /var/virtualizor/log/virt_sqlerror.log
 ```
+
+## Disk-Level Migration to a Non-Virtualizor Target (raw LV streaming)
+
+When moving Virtualizor KVM guests to a Proxmox/bare-libvirt node, do NOT use the panel's migration: native Virtualizor migration stages a full disk copy on the source node, so it fails when the VG free space is smaller than the disk being moved. Stream the raw LVs over SSH instead — it needs no staging space on either side.
+
+Workflow:
+1. Inventory both nodes read-only first: `vgs`/`lvs` (map each `vsv<VMID>-*` LV to its guest via `virsh dumpxml`), target `df -h`/storage capacity, and source hardware profile from dumpxml (machine type, BIOS, disk bus, vCPU/RAM, MAC) to replicate on the target.
+2. Measure the real path before committing: `dd if=/dev/zero bs=1M count=10240 status=none | ssh -c aes128-gcm@openssh.com -p PORT target 'cat > /path/test.bin && sync'` — verify the byte count on the target, compute MB/s, delete the test file. SSH with AES-GCM typically saturates a 1 Gb/s link (~110–117 MB/s); scale per-guest windows from that number.
+3. Interop prep: source nodes often ship with no identity key. Generate a dedicated ed25519 on the source (`ssh-keygen -t ed25519` with a descriptive comment), back up the target's `authorized_keys` timestamped before appending the pubkey, and register the target host key via `ssh-keyscan` comparing fingerprints — so the bulk transfer never stalls on host-key prompts.
+4. Migrate smallest guest first and the largest last: the small ones validate the whole pipeline at low risk and burn little window. Shut each guest down cleanly BEFORE streaming its LV — a stream of a live LV is an inconsistent copy, not a backup.
+5. On the Proxmox target: create the VM with BIOS SeaBIOS / i440fx / virtio disk+net matching the source profile, stream each LV with `dd if=/dev/vg0/<lv> | ssh target 'cat > file.raw'` (or pipe straight into `qm importraw`), preserve the original MAC, and keep the imported VM's NIC disconnected on first boot until the source VM is powered off — identical MAC+IP on two live bridges causes ARP flapping.
+6. Leave source VMs and LVs untouched until each imported guest validates; remove source LVs (`lvremove`) only at the end, with explicit confirmation. Rollback for the interop keys: remove the labeled pubkey line from the target's authorized_keys.
 
 ## Safety Gates & Confirmation Pattern
 

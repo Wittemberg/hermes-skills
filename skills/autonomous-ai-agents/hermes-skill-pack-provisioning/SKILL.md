@@ -39,11 +39,29 @@ Resolve the home from `$HERMES_HOME` when a profile is active; never hardcode `~
    ```bash
    python3 -c "import yaml;d=yaml.safe_load(open('SKILL.md').read().split('---')[1]);print(d['name'])"
    ```
+   When PyYAML is not installed, a string check catches the broken-header case: the file must start with `---` and the header block must contain both `name:` and `description:` lines.
 6. Grep installed skills for overlap with the new pack (`grep -l -i "<distinctive-string>" "$HERMES_HOME"/skills/*/*/SKILL.md`) and report either the conflict or the clean result. Similar names are not conflicts — state why (an OLT skill and a CFTV skill for the same vendor are different domains).
 7. Drop a `SOURCE.txt` in the installed directory: origin URL, which upstream files it came from, and every adaptation you made. Without it the next session cannot tell hand-written content from vendored content.
 8. Clean up the `$TMPDIR` staging copy.
 
 Adapting a skill written for another runtime: `references/adapting-foreign-skill-packs.md`.
+
+## Resolving the pack's declared dependencies (same session, before reporting done)
+
+A vendored skill is inert until the dependencies its README/SKILL.md declare exist. Resolve them in the SAME session — an install whose SKILL.md names a missing framework is a half job the next session cannot see.
+
+- **Companion skills** (a director/orchestrator skill built on a framework's router + domain skills): the SKILL.md names them — clone the upstream repo and vendor that set into the same destination, each with its own SOURCE.txt.
+- **Runtimes/CLIs** the scripts require (e.g. a scripts/ tree that only runs under bun): install via the official installer and symlink the binary into `/usr/local/bin` so agent shells find it on PATH without editing rc files.
+- Validate the whole chain functionally: scaffold the framework's smallest scratch example, lint it, and execute/render one real artifact. A lint pass proves syntax, not a working pipeline.
+
+## Vendoring into this user's pack repo
+
+Source of truth: `github.com/Wittemberg/hermes-skills`, clone at `/root/projetos/hermes-skills`, layout `skills/<category>/<skill>/`. Media/design/motion skills land under `skills/creative/`.
+
+1. Clone upstream with `--depth 1` into `$TMPDIR`, inspect, then `rm -rf .git` before copying — a nested `.git` inside the pack repo corrupts its history.
+2. Copy to BOTH destinations and keep them byte-identical: the repo (source of truth, committed and pushed via `git@github.com`) and the live profile `$HERMES_HOME/skills/<category>/<skill>`. A skill only in the repo never loads; one only in the profile is lost on the next sync.
+3. `SOURCE.txt` goes in BOTH copies, and records the dependency status too (which companion skills/runtimes back this pack).
+4. Ensure vendored `.sh` scripts carry the executable bit before committing.
 
 ## Rewriting SOUL.md
 
