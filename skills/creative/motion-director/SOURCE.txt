@@ -1,0 +1,4 @@
+Vendored from https://github.com/devton/motion-director (branch main, clone of 2026-10-05).
+Upstream files: entire repo except .git (SKILL.md, reference/, workflows/, runbooks/, scripts/, templates/, template.json, README.md).
+Adaptations: none to upstream files. Added this SOURCE.txt. Installed into Hermes profile at /root/.hermes/skills/creative/motion-director.
+Known external deps NOT included: bun runtime and the HyperFrames skills (/hyperframes router + domain skills) required by this skill.
