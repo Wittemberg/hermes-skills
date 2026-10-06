@@ -1,0 +1,3 @@
+Vendored from https://github.com/heygen-com/hyperframes (skills/hyperframes, main, clone of 2026-10-05).
+No content modifications. Installed also into Hermes profile at /root/.hermes/skills/creative/hyperframes.
+Core set required by motion-director (same repo, skills/creative/).
